@@ -357,15 +357,17 @@ Proyecto desarrollado con fines educativos y de aprendizaje.
 
 ## 🔐 Protección de credenciales
 
-Por motivos de **seguridad y protección de credenciales**, las claves de acceso utilizadas por los servicios externos no se encuentran publicadas en el repositorio de GitHub.
+Por motivos de **seguridad y protección de credenciales**, las claves de acceso utilizadas por los servicios externos se mantienen de forma privada.
 
-Esto incluye las claves correspondientes a:
+Las VARIABLES que requieren sus respectivas credenciales son:
 
-- **Cloudinary**
-- **Google Books API**
-- **Google Gemini**
+- **Google Books:** `self.api_key`
+- **Google Gemini:** `API_KEY`
+- **Cloudinary:** `api_key` y `api_secret`
+- **Gmail / SMTP:** `PASSWORD_EMISOR`
 
-Las credenciales son necesarias para el funcionamiento de determinadas funcionalidades de Book Wellness, pero no deben exponerse públicamente en GitHub. Por este motivo, las claves funcionales se mantienen de forma privada y deben ser configuradas mediante las variables de entorno correspondientes al ejecutar o desplegar el proyecto.
+Las demás configuraciones necesarias para estos servicios, como el servidor SMTP, puerto y correo emisor, se encuentran documentadas en el código del proyecto.
+
 
 ---
 
