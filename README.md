@@ -234,16 +234,63 @@ La aplicación se encuentra estructurada mediante diferentes módulos y rutas de
 
 ---
 
-# 🚀 Instalación local
+# 🚀 Instalación y ejecución local
 
-Para ejecutar Book Wellness de manera local:
+Para ejecutar Book Wellness de manera local es necesario contar con un entorno de ejecución adecuado y realizar previamente la configuración de sus dependencias.
+
+### Requisitos
+
+- Tener instalado **Python** y contar con un entorno de ejecución compatible.
+- Contar con las herramientas necesarias para ejecutar el código **JavaScript, HTML y CSS** utilizado por la aplicación.
+- Instalar todas las librerías y dependencias indicadas en el archivo `requirements.txt`.
+- Tener instalado y funcionando **MySQL** para la gestión de la base de datos.
+- Contar con las credenciales necesarias para los servicios externos utilizados por la aplicación, configuradas de forma privada.
+
+### Instalación
+
+Primero, clonar el repositorio y acceder a la carpeta del proyecto:
 
 ```bash
 git clone https://github.com/TU-USUARIO/Book-Wellness.git
 cd Book-Wellness
+```
+
+Instalar las dependencias de Python especificadas en `requirements.txt`:
+
+```bash
 pip install -r requirements.txt
+```
+
+### Base de datos
+
+La base de datos de Book Wellness se encuentra dentro de la carpeta:
+
+```text
+Base de datos
+```
+
+Es necesario importar el archivo de la base de datos en **MySQL** y asegurarse de que el servidor de MySQL se encuentre activo y ejecutando correctamente la base de datos antes de iniciar la aplicación.
+
+### Ejecutar la aplicación
+
+Una vez instaladas las dependencias y configurada la base de datos, ejecutar desde la terminal:
+
+```bash
 python app.py
 ```
+
+Si la aplicación se inicia correctamente, estará disponible de manera local en:
+
+```text
+http://127.0.0.1:5000/
+```
+
+También puede accederse mediante:
+
+```text
+http://localhost:5000/
+```
+
 
 La aplicación también se encuentra disponible mediante su versión desplegada en Render.
 
