@@ -4,3 +4,8 @@ mysql-connector-python
 requests
 APScheduler
 cloudinary
+python-dotenv
+resend
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
