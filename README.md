@@ -40,7 +40,7 @@ Todo ello con un mismo propósito:
 Book Wellness cuenta con una versión desplegada en **Render**, permitiendo acceder a la aplicación sin necesidad de ejecutar el proyecto localmente.
 
 **🔗 Aplicación:**  
-[Colocar aquí el enlace de Render]
+https://book-wellness.onrender.com/
 
 ---
 
