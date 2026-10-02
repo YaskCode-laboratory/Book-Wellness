@@ -7,10 +7,6 @@ class Seguimiento:
 
     @staticmethod
     def _clave_orden(ev):
-        """
-        Extrae una fecha/hora comparable de un evento para poder
-        ordenarlos cronológicamente, sin importar su tipo.
-        """
         valor = ev.get('fecha') or ev.get('fecha_limite') or ev.get('fecha_fin')
 
         if not valor:
