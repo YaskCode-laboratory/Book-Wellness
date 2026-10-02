@@ -1,7 +1,4 @@
-# calendario.py
-# Clase encargada de armar la vista de calendario: qué días tienen
-# actividad de lectura (sesión iniciada) o fecha límite de un libro,
-# y qué libros corresponden a un día específico.
+
 
 from db import obtener_conexion
 
@@ -9,14 +6,7 @@ class Calendario:
 
     @staticmethod
     def obtener_fechas_calendario(id_usuario):
-        """
-        Devuelve un diccionario {fecha: tipo} con todos los días que tienen
-        alguna actividad relevante para el usuario:
-        - 'sesion': el usuario inició una lectura ese día (fecha_inicio)
-        - 'fin_libro': ese día es la fecha límite de un libro
-        Si un mismo día tiene ambos tipos, se prioriza 'fin_libro' para
-        que el calendario resalte los vencimientos por encima de las sesiones normales.
-        """
+
         conexion = obtener_conexion()
         cursor = conexion.cursor(dictionary=True)
 
@@ -51,15 +41,13 @@ class Calendario:
         cursor.close()
         conexion.close()
 
-        # Se recorren las filas para quedarnos con un solo tipo por fecha,
-        # priorizando 'fin_libro' si hay conflicto
+
         fechas = {}
         for fila in filas:
             fecha_str = str(fila['fecha'])
             if fecha_str not in fechas:
                 fechas[fecha_str] = fila['tipo']
             else:
-                # prioridad: concluido > fecha_limite > sesion
                 prioridad = {'concluido': 4, 'fecha_limite': 3, 'primera_sesion': 2, 'sesion': 1}
                 if prioridad.get(fila['tipo'], 0) > prioridad.get(fechas[fecha_str], 0):
                     fechas[fecha_str] = fila['tipo']
@@ -68,12 +56,7 @@ class Calendario:
 
     @staticmethod
     def obtener_libros_por_fecha(id_usuario, fecha):
-        """
-        Devuelve los libros asociados a una fecha específica del calendario,
-        ya sea porque el usuario empezó una sesión de lectura ese día
-        o porque ese día es la fecha límite de terminar el libro.
-        Se usa cuando el usuario hace clic en un día del calendario.
-        """
+
         conexion = obtener_conexion()
         cursor = conexion.cursor(dictionary=True)
         cursor.execute("""
@@ -108,11 +91,7 @@ class Calendario:
 
     @staticmethod
     def obtener_actividades_usuarios_por_fecha(fecha):
-        """
-        Consulta todos los eventos (sesiones iniciadas o fechas límite de libros)
-        que coinciden con la fecha enviada, junto con los datos del usuario para el
-        sistema de notificaciones por correo.
-        """
+
         conexion = obtener_conexion()
         cursor = conexion.cursor(dictionary=True)
 
