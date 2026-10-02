@@ -361,10 +361,10 @@ Por motivos de **seguridad y protección de credenciales**, las claves de acceso
 
 Las VARIABLES que requieren sus respectivas credenciales son:
 
-- **Google Books:** `self.api_key`
-- **Google Gemini:** `API_KEY`
-- **Cloudinary:** `api_key` y `api_secret`
-- **Gmail / SMTP:** `PASSWORD_EMISOR`
+- **GoogleLibros.py:** `self.api_key`
+- **IA/orquestador.py:** `API_KEY`
+- **routes/seguimiento:** `api_key` y `api_secret`
+- **models/notificaciones:** `PASSWORD_EMISOR`
 
 Las demás configuraciones necesarias para estos servicios, como el servidor SMTP, puerto y correo emisor, se encuentran documentadas en el código del proyecto.
 
