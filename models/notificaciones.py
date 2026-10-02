@@ -66,7 +66,7 @@ def toggle_notificaciones():
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 CORREO_EMISOR = "bookwellnesscontacto@gmail.com"
-PASSWORD_EMISOR = "elrv wdvx wbhv oeep"
+PASSWORD_EMISOR = "NO SE PUBLICA"
 
 
 def enviar_correo(destinatario, asunto, cuerpo):
