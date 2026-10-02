@@ -1,5 +1,6 @@
 ﻿Flask
 flask-cors
+flask-Mail
 mysql-connector-python
 requests
 APScheduler
