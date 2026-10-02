@@ -1,7 +1,4 @@
-# Notas.py
-# Clase que representa una nota del usuario, ya sea creada manualmente
-# desde la sección "Notas" o generada automáticamente al terminar una
-# sesión de lectura (reflexión). Ambos tipos se distinguen con self.tipo.
+
 
 import mysql.connector
 from db import obtener_conexion
@@ -10,8 +7,7 @@ class Nota:
     def __init__(self, id_nota=None, id_usuario=None, id_libro=None,
                  titulo=None, contenido=None, categoria=None,
                  fecha_creacion=None, tipo='manual'):
-        # tipo puede ser 'manual' (creada por el usuario en /notas)
-        # o 'sesion' (generada desde la reflexión de sesion-lectura)
+
         self.id_nota = id_nota
         self.id_usuario = id_usuario
         self.id_libro = id_libro
@@ -23,12 +19,7 @@ class Nota:
 
     @staticmethod
     def obtener_todas(id_usuario):
-        """
-        Devuelve dos listas separadas:
-        - notas_manuales: notas escritas directamente por el usuario (tabla notas_usuario)
-        - notas_sesion: reflexiones generadas al terminar una sesión de lectura (tabla notas_lectura)
-        Se traen por separado porque tienen columnas y origen distintos.
-        """
+
         conexion = obtener_conexion()
         cursor = conexion.cursor(dictionary=True)
 
@@ -45,7 +36,6 @@ class Nota:
         notas_manuales = cursor.fetchall()
 
         # Notas de reflexión generadas al terminar una sesión de lectura
-        # (solo se muestran si la sesión ya tiene fecha_fin, es decir, se completó)
         cursor.execute("""
             SELECT nl.id_nota, nl.como_te_sientes, nl.que_aprendiste, nl.palabras_nuevas,
                    nl.personaje_destacado, nl.escena_impacto, nl.parecer_sesion,
@@ -108,11 +98,7 @@ class Nota:
         conexion.close()
 
     def editar_campo_sesion(self, campo, valor):
-        """
-        Edita un solo campo de una nota de sesión (reflexión), por ejemplo
-        'como_te_sientes' o 'palabras_nuevas'. Solo permite editar los campos
-        listados en campos_permitidos, para evitar inyección SQL vía el nombre de columna.
-        """
+
         campos_permitidos = [
             'como_te_sientes', 'que_aprendiste', 'palabras_nuevas',
             'personaje_destacado', 'escena_impacto', 'parecer_sesion',
@@ -131,7 +117,6 @@ class Nota:
         conexion.close()
 
     def eliminar(self):
-        """Elimina una nota manual. """
         if self.tipo != 'manual':
             raise Exception("Las notas de sesión no se pueden eliminar")
         conexion = obtener_conexion()
@@ -142,7 +127,6 @@ class Nota:
         conexion.close()
 
     def to_dict(self):
-        """Convierte la nota a diccionario, útil para devolverla como JSON en las rutas de la API."""
         return {
             'id_nota': self.id_nota,
             'id_libro': self.id_libro,
@@ -155,10 +139,6 @@ class Nota:
 
     @staticmethod
     def filtrar(id_usuario, id_libro=None, categoria=None):
-        """
-        Devuelve notas manuales del usuario, con filtros opcionales por libro
-        y/o categoría. Se usa en la vista de notas para el buscador/filtro.
-        """
         conexion = obtener_conexion()
         cursor = conexion.cursor(dictionary=True)
 
