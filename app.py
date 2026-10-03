@@ -17,7 +17,7 @@ from models.recuperacion import recuperacion_bp
 
 app = Flask(__name__)
 
-app.secret_key = "ilovesucklemons"
+app.secret_key = os.getenv("SECRET_KEY")
 
 # Registrar Blueprints
 app.register_blueprint(ia_bp)
