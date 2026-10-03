@@ -357,32 +357,18 @@ Proyecto desarrollado con fines educativos y de aprendizaje.
 
 ## 🔐 Protección de credenciales
 
-Por motivos de **seguridad y protección de credenciales**, las claves de acceso utilizadas por los servicios externos se mantienen de forma privada. Las variables que requieren sus respectivas credenciales son:
+Por motivos de **seguridad y protección de credenciales**, las claves de acceso utilizadas por los servicios externos no se almacenan directamente en el código fuente.
 
-- **`GoogleLibros.py`** — Key de Google Books:
-  ```python
-  self.api_key
-  ```
+El proyecto utiliza un archivo `.env` para almacenar las credenciales de forma local. Este archivo **no debe publicarse ni subirse al repositorio**. Para facilitar la configuración del proyecto, se incluye un archivo `.env.example` como plantilla con los nombres de las variables necesarias.
 
-- **`IA/orquestador.py`** — Key de Google Gemini:
-  ```python
-  API_KEY
-  ```
+Las principales credenciales utilizadas son:
 
-- **`routes/seguimiento`** — Key y Secret de Cloudinary:
-  ```python
-  api_key
-  ```
-  ```python
-  api_secret
-  ```
+* **`GoogleLibros.py`** — Key de Google Books.
+* **`IA/orquestador.py`** — Key de Google Gemini.
+* **`routes/seguimiento.py`** — Key y Secret de Cloudinary.
+* **`models/notificaciones.py`** — Contraseña de aplicación de Gmail.
 
-- **`models/notificaciones`** — Contraseña de aplicación de Gmail:
-  ```python
-  PASSWORD_EMISOR
-  ```
-
-Las demás configuraciones, como servidor SMTP, puerto y correo emisor, se encuentran documentadas en el código.
+Las variables y sus respectivos nombres se encuentran especificados en **`.env.example`**, donde deben ser configuradas con las credenciales correspondientes.
 
 
 ---
