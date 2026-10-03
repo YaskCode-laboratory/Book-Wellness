@@ -9,8 +9,8 @@ from models.seguimiento import Seguimiento
 
 cloudinary.config(
     cloud_name = "jklaybsr",
-    api_key = "",
-    api_secret = ""  
+    api_key = os.getenv("CLOUDINARY_API_KEY"),
+    api_secret = os.getenv("CLOUDINARY_API_SECRET")  
 )
 
 # -------------------------
