@@ -1,5 +1,6 @@
 import mysql.connector
 from db import obtener_conexion
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Usuario:
@@ -23,6 +24,8 @@ class Usuario:
         conexion = obtener_conexion()
         cursor = conexion.cursor()
 
+        password_hash = generate_password_hash(self.password)
+
         cursor.execute("""
             INSERT INTO usuarios
             (
@@ -35,7 +38,7 @@ class Usuario:
         """, (
             self.nombre,
             self.correo,
-            self.password,
+            password_hash,
             self.nivel_actual
         ))
 
@@ -43,8 +46,10 @@ class Usuario:
         self.id_usuario = cursor.lastrowid
 
         cursor.execute("DELETE FROM usuario_encuesta_temporal")
+
         cursor.execute("""
-            INSERT INTO usuario_encuesta_temporal (id_usuario) VALUES (%s)
+            INSERT INTO usuario_encuesta_temporal (id_usuario)
+            VALUES (%s)
         """, (self.id_usuario,))
 
         conexion.commit()
@@ -53,6 +58,8 @@ class Usuario:
         conexion.close()
 
         return self.id_usuario
+
+
 
     @classmethod
     def iniciar_sesion(cls, correo, password):
@@ -65,14 +72,14 @@ class Usuario:
                 id_usuario,
                 nombre,
                 correo,
+                password,
                 recomendacion_inicial_generada
             FROM usuarios
             WHERE correo = %s
-            AND password = %s
         """, (
             correo,
-            password
         ))
+
 
         datos = cursor.fetchone()
 
@@ -81,6 +88,10 @@ class Usuario:
 
         if not datos:
             return None
+
+        if not check_password_hash(datos["password"], password):
+            return None
+
 
         usuario_logeado = cls(
             id_usuario=datos["id_usuario"],
