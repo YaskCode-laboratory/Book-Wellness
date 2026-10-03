@@ -4,7 +4,7 @@ import time
 
 import db
 
-API_KEY = "LA KEY NO SE PUBLICA"
+API_KEY = os.getenv("GEMINI_API_KEY")
 
 class OrquestadorIA:
 
