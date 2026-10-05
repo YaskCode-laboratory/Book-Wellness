@@ -121,7 +121,6 @@ def test_agregar_libro_manual_correctamente(
                     BytesIO(b"imagen de prueba"),
                     "portada.jpg"
                 )
-
             },
             content_type="multipart/form-data"
         )
@@ -158,7 +157,6 @@ def test_agregar_libro_manual_correctamente(
     )
 
     mock_cache.assert_called_once_with(1)
-
 @patch("routes.seguimiento.db.invalidar_cache_recomendaciones")
 @patch("routes.seguimiento.Libro")
 def test_agregar_libro_manual_sin_capitulos(
@@ -261,10 +259,31 @@ def test_agregar_libro_manual_error(mock_libro):
 # /api/eliminar_libro
 # ============================================================
 
+def test_eliminar_libro_sin_sesion():
+    app = crear_app()
+
+    with app.test_client() as client:
+        respuesta = client.delete(
+            "/api/eliminar_libro",
+            json={
+                "id_libro": 5
+            }
+        )
+
+    assert respuesta.status_code == 401
+
+    assert respuesta.get_json() == {
+        "error": "No hay sesión activa"
+    }
+
+
 def test_eliminar_libro_datos_incompletos():
     app = crear_app()
 
     with app.test_client() as client:
+        with client.session_transaction() as sesion:
+            sesion["id_usuario"] = 1
+
         respuesta = client.delete(
             "/api/eliminar_libro",
             json={}
@@ -281,29 +300,12 @@ def test_eliminar_libro_sin_id_libro():
     app = crear_app()
 
     with app.test_client() as client:
+        with client.session_transaction() as sesion:
+            sesion["id_usuario"] = 1
+
         respuesta = client.delete(
             "/api/eliminar_libro",
-            json={
-                "id_usuario": 1
-            }
-        )
-
-    assert respuesta.status_code == 400
-
-    assert respuesta.get_json() == {
-        "error": "Datos incompletos"
-    }
-
-
-def test_eliminar_libro_sin_id_usuario():
-    app = crear_app()
-
-    with app.test_client() as client:
-        respuesta = client.delete(
-            "/api/eliminar_libro",
-            json={
-                "id_libro": 5
-            }
+            json={}
         )
 
     assert respuesta.status_code == 400
@@ -320,15 +322,17 @@ def test_eliminar_libro_correctamente(
     mock_cache
 ):
     app = crear_app()
-
     with app.test_client() as client:
+        with client.session_transaction() as sesion:
+            sesion["id_usuario"] = 2
+
         respuesta = client.delete(
             "/api/eliminar_libro",
             json={
-                "id_libro": "5",
-                "id_usuario": "2"
+                "id_libro": "5"
             }
         )
+
     assert respuesta.status_code == 200
 
     assert respuesta.get_json() == {
@@ -340,7 +344,7 @@ def test_eliminar_libro_correctamente(
         2
     )
 
-    mock_cache.assert_called_once_with("2")
+    mock_cache.assert_called_once_with(2)
 
 
 @patch("routes.seguimiento.Libro")
@@ -352,11 +356,13 @@ def test_eliminar_libro_error(mock_libro):
     )
 
     with app.test_client() as client:
+        with client.session_transaction() as sesion:
+            sesion["id_usuario"] = 2
+
         respuesta = client.delete(
             "/api/eliminar_libro",
             json={
-                "id_libro": 5,
-                "id_usuario": 2
+                "id_libro": 5
             }
         )
 
