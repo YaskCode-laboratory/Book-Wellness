@@ -87,15 +87,22 @@ def registrar_rutas(app):
     @app.route('/api/eliminar_libro', methods=['DELETE'])
     def eliminar_libro():
 
-        datos = request.json
+        id_usuario = session.get('id_usuario')
+
+        # Rechazar solicitudes sin sesión autenticada
+        if not id_usuario:
+            return jsonify({
+                "error": "No hay sesión activa"
+            }), 401
+
+        datos = request.json or {}
         print("DATOS RECIBIDOS:", datos)
 
         id_libro = datos.get('id_libro')
-        id_usuario = datos.get('id_usuario')
 
         print("ID_LIBRO:", id_libro, "ID_USUARIO:", id_usuario)
 
-        if not id_libro or not id_usuario:
+        if not id_libro:
             return jsonify({
                 "error": "Datos incompletos"
             }), 400
@@ -105,6 +112,7 @@ def registrar_rutas(app):
                 int(id_libro),
                 int(id_usuario)
             )
+
             db.invalidar_cache_recomendaciones(id_usuario)
 
             return jsonify({
@@ -116,6 +124,7 @@ def registrar_rutas(app):
             return jsonify({
                 "error": str(e)
             }), 500
+
         
 
     @app.route('/api/eventos_seguimiento')
@@ -126,3 +135,4 @@ def registrar_rutas(app):
             return jsonify([]), 400
         eventos = Seguimiento.obtener_eventos_por_fecha(id_usuario, fecha)
         return jsonify(eventos)
+
