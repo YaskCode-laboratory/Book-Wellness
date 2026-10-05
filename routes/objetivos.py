@@ -50,10 +50,11 @@ def crear_objetivo():
         }), 400
 
 
-    if not meta:
+    if meta is None or meta == "":
         return jsonify({
             "error": "La meta es obligatoria."
         }), 400
+
 
 
     try:
