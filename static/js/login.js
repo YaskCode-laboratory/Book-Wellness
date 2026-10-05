@@ -58,9 +58,7 @@ document.getElementById('formulario-login').addEventListener('submit', async (e)
                     resultadoInicial
                 );
             
-                sessionStorage.removeItem(
-                    "recomendacion_inicial_en_proceso"
-                );
+                
             
             })
             .catch(error => {
@@ -70,9 +68,7 @@ document.getElementById('formulario-login').addEventListener('submit', async (e)
                     error
                 );
             
-                sessionStorage.removeItem(
-                    "recomendacion_inicial_en_proceso"
-                );
+                
             
             });
             
@@ -104,3 +100,4 @@ document.getElementById('formulario-login').addEventListener('submit', async (e)
             "No hay conexión con el servidor.";
     }
 });
+
