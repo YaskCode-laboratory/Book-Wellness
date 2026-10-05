@@ -1,14 +1,14 @@
 # database.py
-import mysql.connector
 import os
+import mysql.connector
 
 def obtener_conexion():
     return mysql.connector.connect(
-        user='root',
-        password='',
-        host='localhost',
-        database='proyectowellness',
-        port=3306
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        port=int(os.getenv("DB_PORT"))
     )
 
 
@@ -172,4 +172,5 @@ def obtener_historial(id_usuario, limite=20):
     historial.reverse()
 
     return historial
+
 
