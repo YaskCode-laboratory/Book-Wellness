@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+import os
 
 # Importar las rutas
 from routes.home import registrar_rutas as home_routes
