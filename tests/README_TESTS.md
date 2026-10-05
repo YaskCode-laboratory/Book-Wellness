@@ -58,13 +58,13 @@ De esta manera, `pytest -v` puede seguir utilizándose normalmente cuando solo s
 
 ## ⚠️ Observación sobre Google Books
 
-Una de las pruebas relacionadas con **Google Books** utiliza una clave real de prueba para realizar una consulta sobre un libro específico.
+Una de las pruebas relacionadas con **Google Books** utiliza una clave de libro real de prueba para realizar una consulta sobre un libro específico.
 
 Actualmente, esta prueba utiliza la información asociada al **libro de prueba configurado en el test**.
 
-Si en algún momento esa clave deja de ser válida, cambia sus permisos, alcanza algún límite o deja de permitir la consulta utilizada por la prueba, **el test podría comenzar a fallar aunque el funcionamiento general de Google Books dentro de la aplicación siga siendo correcto**.
+Si en algún momento esa clave o identificador del libro deja de ser válida, cambia, o deja de permitir la consulta utilizada por la prueba, **el test podría comenzar a fallar aunque el funcionamiento general de Google Books dentro de la aplicación siga siendo correcto**.
 
-Por este motivo, si dicha prueba comienza a fallar inesperadamente, se recomienda comprobar primero la validez de la clave utilizada y la disponibilidad de la consulta del libro de prueba.
+Por este motivo, si dicha prueba comienza a fallar inesperadamente, se recomienda comprobar primero la validez de la clave del libro utilizada y la disponibilidad de la consulta del libro de prueba.
 
 ---
 
