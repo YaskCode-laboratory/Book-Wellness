@@ -1,7 +1,7 @@
 import json
 import requests
 import time
-
+import os
 import db
 
 API_KEY = os.getenv("GEMINI_API_KEY")
