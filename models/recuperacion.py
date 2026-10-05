@@ -22,7 +22,7 @@ except (ImportError, ModuleNotFoundError):
 recuperacion_bp = Blueprint('recuperacion', __name__)
 
 # Clave secreta para firmar el token
-SECRET_KEY = "clave_secreta_book_wellness"
+SECRET_KEY = os.getenv("SECRET_KEY")
 serializer = URLSafeTimedSerializer(SECRET_KEY)
 
 
@@ -78,9 +78,6 @@ def restablecer_contrasena(token):
 
         if not nueva_password:
             return "La contraseña no puede estar vacía", 400
-
-        # Generar hash de la nueva contraseña
-        password_hash = generate_password_hash(nueva_password)
 
         # Actualizar contraseña en MySQL
         password_hash = generate_password_hash(nueva_password)
