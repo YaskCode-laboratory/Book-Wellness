@@ -1,122 +1,137 @@
-from datetime import datetime
+from flask import render_template, request, jsonify, session
+import db
+from models.Libro import Libro
+import os
+import cloudinary
+import cloudinary.uploader
 
-from db import obtener_conexion
+from models.seguimiento import Seguimiento
 
-class Seguimiento:
+cloudinary.config(
+    cloud_name = "jklaybsr",
+    api_key = os.getenv("CLOUDINARY_API_KEY"),
+    api_secret = os.getenv("CLOUDINARY_API_SECRET")  
+)
 
+# -------------------------
+# ELIMINAR LIBRO
+# -------------------------
+def registrar_rutas(app):
 
-    @staticmethod
-    def _clave_orden(ev):
-        valor = ev.get('fecha') or ev.get('fecha_limite') or ev.get('fecha_fin')
+    @app.route('/api/agregar_libro_manual', methods=['POST'])
+    def agregar_libro_manual():
+        id_usuario = session.get('id_usuario')
+        
+        if not id_usuario:
+            return jsonify({"error": "No hay sesión activa"}), 401
 
-        if not valor:
-            return datetime.min
+        titulo = request.form.get('titulo')
+        autor = request.form.get('autor')
+        descripcion = request.form.get('descripcion', '')
+        paginas = request.form.get('paginas')
+        capitulos = request.form.get('capitulos')
+        anio = request.form.get('anio')
+        genero = request.form.get('genero')
+        formato = request.form.get('formato')
+        categoria = request.form.get('categoria', 'pendiente')
+
+        if not titulo or not autor:
+            return jsonify({"error": "Título y autor son obligatorios"}), 400
+
+        portada = None
+        if 'portada' in request.files:
+            archivo = request.files['portada']
+            if archivo.filename != '':
+                try:
+                    resultado_cloud = cloudinary.uploader.upload(archivo)
+                    portada = resultado_cloud.get('secure_url')
+                except Exception as e:
+                    print("ERROR CLOUDINARY:", e)
 
         try:
-            if ' ' in valor:
-                return datetime.strptime(valor, '%Y-%m-%d %H:%M:%S')
-            else:
-                return datetime.strptime(valor, '%Y-%m-%d')
-        except (ValueError, TypeError):
-            return datetime.min
+            # 1. Crear la instancia con todos los datos
+            libro = Libro(
+                id_usuario=id_usuario,
+                titulo=titulo,
+                autor=autor,
+                descripcion=descripcion,
+                portada=portada,
+                categoria=categoria,
+                key_libro=None,       # manual no tiene key_libro
+                paginas=paginas,
+                id_google=None,       # manual no tiene id_google
+                genero=genero,
+                anio=anio,
+                es_manual=True,       # ← True porque es agregado manual
+                formato=formato
+            )
+            
+            # 2. Guardar (0 argumentos)
+            resultado = libro.guardar()  # Devuelve id_nuevo o False
 
+            if resultado:
+                if capitulos:
+                    # .actualizar_datos SÍ es estático, así que está bien
+                    Libro.actualizar_datos(resultado, num_caps=int(capitulos))
+                    
+                db.invalidar_cache_recomendaciones(id_usuario)
+                return jsonify({"mensaje": "Libro agregado correctamente"}), 201
+            
+            return jsonify({"error": "Este libro ya está en tu lista"}), 409
 
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
-    @staticmethod
-    def obtener_eventos_por_fecha(id_usuario, fecha):
-        conexion = obtener_conexion()
-        cursor = conexion.cursor(dictionary=True)
+    
+    
+    @app.route('/api/eliminar_libro', methods=['DELETE'])
+    def eliminar_libro():
 
+        id_usuario = session.get('id_usuario')
+
+        # Rechazar solicitudes sin sesión autenticada
+        if not id_usuario:
+            return jsonify({
+                "error": "No hay sesión activa"
+            }), 401
+
+        datos = request.json or {}
+        print("DATOS RECIBIDOS:", datos)
+
+        id_libro = datos.get('id_libro')
+
+        print("ID_LIBRO:", id_libro, "ID_USUARIO:", id_usuario)
+
+        if not id_libro:
+            return jsonify({
+                "error": "Datos incompletos"
+            }), 400
+
+        try:
+            Libro.eliminar(
+                int(id_libro),
+                int(id_usuario)
+            )
+
+            db.invalidar_cache_recomendaciones(id_usuario)
+
+            return jsonify({
+                "mensaje": "Libro eliminado"
+            }), 200
+
+        except Exception as e:
+            print("ERROR ELIMINAR:", str(e))
+            return jsonify({
+                "error": str(e)
+            }), 500
 
         
 
-        # Fechas límite
-        cursor.execute("""
-            SELECT l.titulo, l.autor, l.portada, l.id_libro,
-                lec.fecha_limite, lec.fecha_fin, lec.estado,
-                CASE WHEN lec.fecha_limite < CURDATE() AND lec.estado != 'He terminado el libro'
-                     THEN 'expirada' ELSE 'fecha_limite' END as tipo
-            FROM lecturas lec
-            JOIN libros l ON lec.id_libro = l.id_libro
-            WHERE lec.id_usuario = %s AND DATE(lec.fecha_limite) = %s
-        """, (id_usuario, fecha))
-        limites = cursor.fetchall()
-
-        # Sesiones individuales
-
-        cursor.execute("""
-            SELECT l.titulo, l.autor, l.portada, l.id_libro,
-                s.paginas_leidas_sesion as paginas_leidas,
-                s.tiempo_minutos, s.fecha, s.capitulos_leidos,
-                s.como_te_sientes, 'sesion' as tipo
-            FROM sesiones s
-            JOIN lecturas lec ON s.id_lectura = lec.id_lectura
-            JOIN libros l ON lec.id_libro = l.id_libro
-            WHERE s.id_usuario = %s AND DATE(s.fecha) = %s
-            AND s.id_sesion != (
-                SELECT MIN(s2.id_sesion)
-                FROM sesiones s2
-                WHERE s2.id_lectura = lec.id_lectura
-            )
-        """, (id_usuario, fecha))
-        sesiones = cursor.fetchall()
-        
-        for ev in sesiones:
-            if ev.get('fecha'):
-                ev['fecha'] = str(ev['fecha'])
-
-        # Primera sesión de cada libro 
-        cursor.execute("""
-            SELECT l.titulo, l.autor, l.portada, l.id_libro,
-                s.paginas_leidas_sesion as paginas_leidas,
-                s.tiempo_minutos, s.fecha, s.capitulos_leidos,
-                s.como_te_sientes,
-                'primera_sesion' as tipo
-            FROM sesiones s
-            JOIN lecturas lec ON s.id_lectura = lec.id_lectura
-            JOIN libros l ON lec.id_libro = l.id_libro
-            WHERE s.id_usuario = %s
-            AND s.id_sesion = (
-                SELECT MIN(s2.id_sesion)
-                FROM sesiones s2
-                WHERE s2.id_lectura = lec.id_lectura
-            )
-            AND DATE(s.fecha) = %s
-        """, (id_usuario, fecha))
-        primeras_sesiones = cursor.fetchall()
-
-        for ev in primeras_sesiones:
-            if ev.get('fecha'):
-                ev['fecha'] = str(ev['fecha'])
-
-        # Concluidos
-        cursor.execute("""
-            SELECT l.titulo, l.autor, l.portada, l.id_libro,
-                lec.fecha_fin, lec.paginas_leidas, lec.tiempo_minutos,
-                'concluido' as tipo
-            FROM lecturas lec
-            JOIN libros l ON lec.id_libro = l.id_libro
-            WHERE lec.id_usuario = %s AND DATE(lec.fecha_fin) = %s
-            AND lec.estado = 'He terminado el libro'
-        """, (id_usuario, fecha))
-        concluidos = cursor.fetchall()
-
-        cursor.close()
-        conexion.close()
-
-        for ev in sesiones:
-            if ev.get('fecha'):
-                ev['fecha'] = str(ev['fecha'])
-
-        for ev in limites:
-            if ev.get('fecha_limite'):
-                ev['fecha_limite'] = str(ev['fecha_limite'])
-
-        for ev in concluidos:
-            if ev.get('fecha_fin'):
-                ev['fecha_fin'] = str(ev['fecha_fin'])
-
-        todos_eventos = primeras_sesiones + sesiones + limites + concluidos
-        todos_eventos.sort(key=Seguimiento._clave_orden)
-
-        return todos_eventos
+    @app.route('/api/eventos_seguimiento')
+    def eventos_seguimiento():
+        id_usuario = session.get('id_usuario')
+        fecha = request.args.get('fecha')
+        if not id_usuario or not fecha:
+            return jsonify([]), 400
+        eventos = Seguimiento.obtener_eventos_por_fecha(id_usuario, fecha)
+        return jsonify(eventos)
