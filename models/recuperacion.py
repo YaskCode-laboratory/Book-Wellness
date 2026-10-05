@@ -1,8 +1,14 @@
 import sys
 import os
 from flask import Blueprint, render_template, request, redirect, url_for
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from itsdangerous import (
+    URLSafeTimedSerializer,
+    SignatureExpired,
+    BadTimeSignature,
+    BadSignature
+)
 from db import obtener_conexion
+from werkzeug.security import generate_password_hash
 
 # Importación flexible de enviar_correo según la ubicación del ejecutor
 try:
@@ -64,7 +70,7 @@ def restablecer_contrasena(token):
     try:
         # Validar token (expira en 900 segundos / 15 minutos)
         correo = serializer.loads(token, salt='recuperar-contrasena', max_age=900)
-    except (SignatureExpired, BadTimeSignature):
+    except (SignatureExpired, BadTimeSignature, BadSignature):
         return "<h3>El enlace de recuperación es inválido o ha expirado. Por favor, solicita uno nuevo.</h3>", 400
 
     if request.method == 'POST':
@@ -73,13 +79,29 @@ def restablecer_contrasena(token):
         if not nueva_password:
             return "La contraseña no puede estar vacía", 400
 
+        # Generar hash de la nueva contraseña
+        password_hash = generate_password_hash(nueva_password)
+
         # Actualizar contraseña en MySQL
+        password_hash = generate_password_hash(nueva_password)
+
         conexion = obtener_conexion()
         cursor = conexion.cursor()
-        cursor.execute("UPDATE usuarios SET password = %s WHERE correo = %s", (nueva_password, correo))
+
+        cursor.execute(
+            "UPDATE usuarios SET password = %s WHERE correo = %s",
+            (password_hash, correo)
+        )
+
+        print("Correo recibido:", correo)
+        print("Filas modificadas:", cursor.rowcount)
+
         conexion.commit()
+
         cursor.close()
         conexion.close()
+
+
 
         # Ajusta 'usuarios.iniciar_sesion' o la ruta correspondiente a tu vista de login
         return redirect('/sesion')
