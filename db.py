@@ -1,5 +1,6 @@
 # database.py
 import mysql.connector
+import os
 
 def obtener_conexion():
     return mysql.connector.connect(
