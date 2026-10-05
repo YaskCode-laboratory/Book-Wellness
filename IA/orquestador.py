@@ -104,6 +104,8 @@ class OrquestadorIA:
                 # Ya no quedan intentos
                 print("Gemini continúa respondiendo 503 después de 3 intentos.")
 
+                return None
+
             # Cualquier respuesta que NO sea 503
             # se procesa normalmente.
             respuesta.raise_for_status()
@@ -217,4 +219,5 @@ class OrquestadorIA:
         finally:
 
             self.timeout = timeout_original
+
 
