@@ -1,0 +1,104 @@
+# ============================================================
+# BOOK WELLNESS - .gitignore
+# ============================================================
+
+# -------------------------
+# VARIABLES DE ENTORNO
+# -------------------------
+.env
+.env.*
+!.env.example
+
+# -------------------------
+# PYTHON
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+env/
+.venv/
+ENV/
+
+# Distribución / paquetes
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# -------------------------
+# TESTING
+# -------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Reportes generados de pruebas
+reporte.txt
+reporte_test.txt
+test_report.txt
+
+# -------------------------
+# IDE / EDITORES
+# -------------------------
+.vscode/
+.idea/
+.python-version
+
+# -------------------------
+# CERTIFICADOS / CLAVES
+# -------------------------
+*.pem
+*.key
+*.crt
+
+# -------------------------
+# LOGS
+# -------------------------
+*.log
+logs/
+
+# -------------------------
+# DOCUMENTACIÓN / INFORMES
+# -------------------------
+documentacion/
+
+# -------------------------
+# ARCHIVOS TEMPORALES
+# -------------------------
+*.tmp
+*.temp
+*.swp
+*.swo
+*.swn
+*.orig
+*.bak
+
+# -------------------------
+# SISTEMA OPERATIVO
+# -------------------------
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# -------------------------
+# ARCHIVOS GENERADOS LOCALMENTE
+# -------------------------
+instance/
+uploads/
+
