@@ -373,3 +373,4 @@ Devuelve ÚNICAMENTE un JSON válido con esta estructura:
 
         cursor.close()
         conexion.close()
+
