@@ -1,6 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Importar las rutas
 from routes.home import registrar_rutas as home_routes
@@ -24,7 +27,7 @@ app.secret_key = os.getenv("SECRET_KEY")
 app.register_blueprint(ia_bp)
 app.register_blueprint(recomendador_bp)
 app.register_blueprint(notificaciones_bp)
-app.register_blueprint(objetivos_bp) 
+app.register_blueprint(objetivos_bp)
 app.register_blueprint(recuperacion_bp)
 
 CORS(app)
@@ -41,4 +44,6 @@ if __name__ == "__main__":
         debug=True,
         port=5000
     )
+    
+
     
