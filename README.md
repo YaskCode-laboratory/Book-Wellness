@@ -355,18 +355,22 @@ Proyecto desarrollado con fines educativos y de aprendizaje.
 
 ---
 
-## 🔐 Protección de credenciales
+## 🔐 Configuración mediante variables de entorno
 
-Por motivos de **seguridad y protección de credenciales**, las claves de acceso utilizadas por los servicios externos no se almacenan directamente en el código fuente.
+El proyecto utiliza un archivo `.env` para almacenar las credenciales y configuraciones necesarias para su funcionamiento.
 
-El proyecto utiliza un archivo `.env` para almacenar las credenciales de forma local. Este archivo **no debe publicarse ni subirse al repositorio**. Para facilitar la configuración del proyecto, se incluye un archivo `.env.example` como plantilla con los nombres de las variables necesarias.
+Por motivos de seguridad, el archivo `.env` **no debe subirse al repositorio**. En su lugar, se incluye un archivo `.env.example` que sirve como plantilla y muestra las variables necesarias para configurar el proyecto.
 
-Las principales credenciales utilizadas son:
+Para ejecutar el proyecto localmente, se debe crear un archivo `.env` a partir de `.env.example` y completar los valores correspondientes.
 
-* **`GoogleLibros.py`** — Key de Google Books.
-* **`IA/orquestador.py`** — Key de Google Gemini.
-* **`routes/seguimiento.py`** — Key y Secret de Cloudinary.
-* **`models/notificaciones.py`** — Contraseña de aplicación de Gmail.
+Las variables utilizadas son:
+
+- **Google Books:** `GOOGLE_BOOKS_API_KEY`
+- **Google Gemini:** `GEMINI_API_KEY`
+- **Cloudinary:** `CLOUDINARY_API_KEY` y `CLOUDINARY_API_SECRET`
+- **Gmail:** `PASSWORD_EMISOR`
+- **Flask:** `SECRET_KEY`
+- **Base de datos:** `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_NAME` y `DB_PORT`
 
 Las variables y sus respectivos nombres se encuentran especificados en **`.env.example`**, donde deben ser configuradas con las credenciales correspondientes.
 
