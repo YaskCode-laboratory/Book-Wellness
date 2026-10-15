@@ -8,6 +8,11 @@ class GoogleBooksAPI:
         self.url_base = "https://www.googleapis.com/books/v1/volumes"
         self.api_key = os.getenv("GOOGLE_BOOKS_API_KEY")
 
+        print(
+            "Google Books API key cargada:",
+            bool(self.api_key)
+        )
+
 
     def buscar_libros(self, texto):
 
