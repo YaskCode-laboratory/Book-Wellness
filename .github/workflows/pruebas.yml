@@ -28,4 +28,7 @@ jobs:
           pip install pytest
 
       - name: Ejecutar pruebas
+        env:
+          SECRET_KEY: clave-exclusiva-para-pruebas
         run: python -m pytest -v
+
