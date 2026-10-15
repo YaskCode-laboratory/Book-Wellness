@@ -514,7 +514,7 @@ def test_obtener_desde_google_si_no_existe_bd(mock_conexion):
 
     # Se consulta Google Books REALMENTE.
     resultado = Libro.obtener_desde_bd_o_google(
-        id_google="4SHsEQAAQBAJ"
+        id_google="KZvHBAAAQBAJ"
     )
 
     assert resultado is not None
