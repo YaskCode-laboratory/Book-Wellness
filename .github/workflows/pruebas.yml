@@ -30,9 +30,10 @@ jobs:
       - name: Ejecutar pruebas
         env:
           SECRET_KEY: clave-exclusiva-para-pruebas
-          DB_USER: test
-          DB_PASSWORD: test
+          DB_USER: root
+          DB_PASSWORD: ""
           DB_HOST: localhost
-          DB_NAME: test
+          DB_NAME: proyectowellness
           DB_PORT: "3306"
         run: python -m pytest -v
+
