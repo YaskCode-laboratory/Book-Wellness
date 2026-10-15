@@ -29,6 +29,7 @@ jobs:
 
       - name: Ejecutar pruebas
         env:
+          GOOGLE_BOOKS_API_KEY: ${{ secrets.GOOGLE_BOOKS_API_KEY }}
           SECRET_KEY: clave-exclusiva-para-pruebas
           DB_USER: root
           DB_PASSWORD: ""
@@ -36,4 +37,5 @@ jobs:
           DB_NAME: proyectowellness
           DB_PORT: "3306"
         run: python -m pytest -v
+
 
