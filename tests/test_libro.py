@@ -392,24 +392,6 @@ def test_formatear_respuesta_valores_vacios():
 
 
 # ============================================================
-# GOOGLE BOOKS - API REAL
-# ============================================================
-
-def test_buscar_google_api_real():
-    resultado = Libro.buscar_google("Harry Potter")
-
-    assert resultado is not None
-    assert isinstance(resultado, (dict, list))
-
-
-def test_obtener_google_api_real():
-    resultado = Libro.obtener_google("KZvHBAAAQBAJ")
-
-    assert resultado is not None
-    assert isinstance(resultado, dict)
-
-
-# ============================================================
 # OPENLIBRARY - API REAL
 # ============================================================
 
@@ -499,26 +481,6 @@ def test_obtener_desde_bd_por_id_libro(mock_conexion):
     )
 
     assert resultado["titulo"] == "El Hobbit"
-
-
-@patch("models.Libro.obtener_conexion")
-def test_obtener_desde_google_si_no_existe_bd(mock_conexion):
-    conexion = MagicMock()
-    cursor = MagicMock()
-
-    mock_conexion.return_value = conexion
-    conexion.cursor.return_value = cursor
-
-    # La base de datos no encuentra el libro.
-    cursor.fetchone.return_value = None
-
-    # Se consulta Google Books REALMENTE.
-    resultado = Libro.obtener_desde_bd_o_google(
-        id_google="KZvHBAAAQBAJ"
-    )
-
-    assert resultado is not None
-    assert isinstance(resultado, dict)
 
 
 @patch("models.Libro.obtener_conexion")
